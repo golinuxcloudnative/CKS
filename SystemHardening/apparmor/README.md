@@ -3,21 +3,19 @@
 - [How to use in](#how-to-use-in)
   - [Nerdctl](#nerdctl)
   - [Docker](#docker)
-  - [Crictl](#crictl)
   - [Kubernetes](#kubernetes)
 - [References](#references)
 
 # Basic 
 You need to have Apparmor enabled. Check if Kernel module is loaded.
 ```bash
+# you should see the name apparmor in the list
 cat /sys/kernel/security/lsm
-> lockdown,capability,landlock,yama,apparmor
 ```
 
 Check status
 
 ```bash
-# check apparmor status
 ## Option 1 - it should show Y
 cat /sys/module/apparmor/parameters/enabled
 ## Option 2 - cli
@@ -31,7 +29,7 @@ The profiles can be:
 
 Check the mode
 ```bash
-/sys/module/apparmor/parameters/mode
+cat /sys/module/apparmor/parameters/mode
 ```
 
 List loaded profiles
@@ -54,11 +52,12 @@ sudo apt install apparmor-easyprof apparmor-notify apparmor-utils certspotter
 aa-genprof /path/to/bin
 ```
 
-load a profile
+Load a profile
  ```bash
  apparmor_parser /path/of/profile
  ```
-unload a profile
+
+Unload a profile
  ```bash
  # option 1
  apparmor_parser -R /path/of/profile
@@ -71,30 +70,34 @@ unload a profile
 ```console
 # list profiles
 nerdctl apparmor ls
+
 # show default profile nerdctl-profile
 nerdctl apparmor inspect
+
 # run container with default profile
 nerdctl run --rm -d --name nginx-nerdctl nginx
 nerdctl inspect nginx-nerdctl -f {{.AppArmorProfile}}
+
 # run container with specific profile
 nerdctl run -d --security-opt apparmor=docker-default --name nginx-nerdctl-profile nginx
 nerdctl inspect nginx-nerdctl-profile -f {{.AppArmorProfile}}
 ```
 ## Docker
-```console
+```bash
 # list profiles
-root@lima-default:~# nerdctl apparmor ls
+nerdctl apparmor ls
+
 # show default profile nerdctl-profile
 nerdctl apparmor inspect
+
 # run container with default profile
 docker run --rm -d --name nginx-docker nginx
 docker inspect nginx-docker -f {{.AppArmorProfile}}
+
 # run container with specific profile
 docker run --rm -d --name nginx-docker-profile --security-opt apparmor=nerdctl-default nginx
 docker inspect nginx-docker-profile -f {{.AppArmorProfile}}
 ```
-## Crictl
-
 ## Kubernetes
 It can be set by annotations in pod. `container.apparmor.security.beta.kubernetes.io/<container_name>: <profile_ref>`
 where <profile_ref> can be:

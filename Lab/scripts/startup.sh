@@ -1,5 +1,7 @@
 #!/bin/bash
 
+export DEBIAN_FRONTEND=noninteractive
+
 echo "--> updating /etc/hosts <--"
 echo "$CONTROL_NODE_IP $CONTROL_NODE_HOSTNAME" >> /etc/hosts
 
@@ -29,10 +31,10 @@ EOF
  sysctl --system
 
 echo "--> update and upgrade packages <--"
-apt-get update && apt-get upgrade -y
+apt-get update -qq  && apt-get upgrade -qq -y
 
 echo "--> install basic packages <--"
-apt-get install -y apt-transport-https \
+apt-get install -qq -y apt-transport-https \
     ca-certificates \
     curl \
     gnupg \
@@ -41,7 +43,7 @@ apt-get install -y apt-transport-https \
 
 echo "--> install container runtime (containerd) <--"
 
-apt-get remove docker docker-engine docker.io containerd runc
+apt-get remove -qq -y docker docker-engine docker.io containerd runc
 
 mkdir -p /etc/apt/keyrings 
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
@@ -50,13 +52,15 @@ echo \
   "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
   $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
 
-apt-get update
-apt-get install docker-ce docker-ce-cli containerd.io docker-compose-plugin -y
+apt-get update -qq
+apt-get install -qq docker-ce docker-ce-cli containerd.io docker-compose-plugin -y
 
-systemctl disable docker.service
 systemctl disable docker.socket
-systemctl stop docker.service
+systemctl disable docker.service
+
 systemctl stop docker.socket
+systemctl stop docker.service
+
 
 mkdir /etc/containerd
 containerd config default > /etc/containerd/config.toml
@@ -70,7 +74,7 @@ curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.
 
 echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | tee /etc/apt/sources.list.d/kubernetes.list
 
-apt-get update && apt-get install -y kubelet=$K8S_VERSION kubeadm=$K8S_VERSION kubectl=$K8S_VERSION && apt-mark hold kubelet=$K8S_VERSION kubeadm=$K8S_VERSION kubectl=$K8S_VERSION
+apt-get -qq update && apt-get install -qq -y kubelet=$K8S_VERSION-00 kubeadm=$K8S_VERSION-00 kubectl=$K8S_VERSION-00 && apt-mark hold kubelet=$K8S_VERSION-00 kubeadm=$K8S_VERSION-00 kubectl=$K8S_VERSION-00
 
 echo "--> create command completion <--"
 if [[ ! -f "$HOME/.once" ]]; then
@@ -87,7 +91,3 @@ if [[ ! -f "$HOME/.once" ]]; then
     echo 'complete -o default -F __start_kubectl k' >>~/.bashrc
     touch $HOME/.once
 fi
-
-
-
-

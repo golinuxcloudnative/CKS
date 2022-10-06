@@ -8,10 +8,15 @@ chmod +x /tmp/join.sh
 echo "--> kube config <--"
 
 mkdir -p $HOME/.kube
-cp -i /vagrant/shared/kubeconfig $HOME/.kube/config
+cp -f /vagrant/shared/kubeconfig $HOME/.kube/config
 chown $(id -u):$(id -g) $HOME/.kube/config
 
 
 mkdir -p /home/vagrant/.kube
-sudo cp -i /vagrant/shared/kubeconfig /home/vagrant/.kube/config
+sudo cp -f /vagrant/shared/kubeconfig /home/vagrant/.kube/config
 sudo chown $(id vagrant -u):$(id vagrant -g) /home/vagrant/.kube/config
+
+
+echo "--> approve certificates <--"
+sleep 5
+kubectl get csr | grep Pending | cut -f1 -d" " | xargs kubectl certificate approve

@@ -4,9 +4,6 @@ metadata:
   name: tigera-operator
   labels:
     name: tigera-operator
-
----
-
 ---
 # Source: crds/calico/crd.projectcalico.org_bgpconfigurations.yaml
 apiVersion: apiextensions.k8s.io/v1
@@ -376,8 +373,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: (devel)
-  creationTimestamp: null
+    controller-gen.kubebuilder.io/version: (devel)  
   name: caliconodestatuses.crd.projectcalico.org
 spec:
   group: crd.projectcalico.org
@@ -861,10 +857,10 @@ spec:
                 - type: string
                 description: 'BPFPSNATPorts sets the range from which we randomly
                   pick a port if there is a source port collision. This should be
-                  within the ephemeral range as defined by RFC 6056 (1024–65535) and
+                  within the ephemeral range as defined by RFC 6056 (1024â€“65535) and
                   preferably outside the  ephemeral ranges used by common operating
-                  systems. Linux uses 32768–60999, while others mostly use the IANA
-                  defined range 49152–65535. It is not necessarily a problem if this
+                  systems. Linux uses 32768â€“60999, while others mostly use the IANA
+                  defined range 49152â€“65535. It is not necessarily a problem if this
                   range overlaps with the operating systems. Both ends of the range
                   are inclusive. [Default: 20000:29999]'
                 pattern: ^.*
@@ -2760,8 +2756,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: (devel)
-  creationTimestamp: null
+    controller-gen.kubebuilder.io/version: (devel)  
   name: ipreservations.crd.projectcalico.org
 spec:
   group: crd.projectcalico.org
@@ -4542,6 +4537,7 @@ spec:
                 - AKS
                 - OpenShift
                 - DockerEnterprise
+                - RKE2
                 type: string
               nodeMetricsPort:
                 description: NodeMetricsPort specifies which port calico/node serves
@@ -5292,6 +5288,7 @@ spec:
                     - AKS
                     - OpenShift
                     - DockerEnterprise
+                    - RKE2
                     type: string
                   nodeMetricsPort:
                     description: NodeMetricsPort specifies which port calico/node
@@ -6066,7 +6063,7 @@ spec:
       dnsPolicy: ClusterFirstWithHostNet
       containers:
         - name: tigera-operator
-          image: quay.io/tigera/operator:v1.27.1
+          image: quay.io/tigera/operator:v1.27.12
           imagePullPolicy: IfNotPresent
           command:
             - operator
@@ -6084,7 +6081,7 @@ spec:
             - name: OPERATOR_NAME
               value: "tigera-operator"
             - name: TIGERA_OPERATOR_INIT_IMAGE_VERSION
-              value: v1.27.1
+              value: v1.27.12
           envFrom:
             - configMapRef:
                 name: kubernetes-services-endpoint
@@ -6093,4 +6090,3 @@ spec:
         - name: var-lib-calico
           hostPath:
             path: /var/lib/calico
-

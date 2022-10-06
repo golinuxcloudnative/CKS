@@ -70,3 +70,21 @@ You can configure the lab editing the file `.env`.
 - Print default config of kubeadm \
 `kubeadm config print init-defaults`
 
+
+
+
+# Start
+```
+vagrant up
+
+vagrant ssh control-node
+sudo -i
+
+# CNI Calico if the node is not ready
+kubectl -f /vagrant/calico/custom-resources.yaml
+kubectl -f /vagrant/calico/tigera-operator.yaml
+
+# Metrics server
+kubectl apply -f /vagrant/metrics/components.yaml
+kubectl top nodes
+```

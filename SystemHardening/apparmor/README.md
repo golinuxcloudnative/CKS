@@ -105,6 +105,8 @@ where <profile_ref> can be:
 * localhost/<profile_name> to apply the profile loaded on the host with the name <profile_name>
 * unconfined to indicate that no profiles will be loaded
 
+Load a profile `aa-enforced deny-write-profile`, the name of profile is `k8s-apparmor-example-deny-write`
+
 ```yaml
 apiVersion: v1
 kind: Pod
@@ -119,6 +121,8 @@ spec:
     image: busybox:1.28
     command: [ "sh", "-c", "echo 'Hello AppArmor!' && sleep 1h" ]
 ```
+
+
 
 
 # References
